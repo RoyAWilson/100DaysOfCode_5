@@ -11,6 +11,8 @@ from dotenv import load_dotenv
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from protonmail import ProtonMail
+
 
 load_dotenv()
 
@@ -45,7 +47,44 @@ SRCH = driver.find_element(
     By.XPATH, '//*[starts-with(@id, "jobs-search-box")]')
 SRCH.clear()
 SRCH.send_keys('Python Developer', Keys.ENTER)
-time.sleep(25)
+time.sleep(40)
 
 # Find Easy Apply jobs only:
-# driver.find_element(By.XPATH, "//button[contains(text(),'Easy Apply')]")
+# Have got it to work, at last! Can't see that anything different to what I did several times
+# except I assigned the element to a variable then sent the click.  Hope it works still when come back
+# in a while.
+EA_Jobs = driver.find_element(By.XPATH, '//button[text()="Easy Apply"]')
+EA_Jobs.click()
+time.sleep(30)
+
+# Grab some details of the first page of jobs to save or send to self:
+cont = driver.find_element(
+    By.CSS_SELECTOR, value='.scaffold-layout__list-container')
+strong = cont.find_elements(by=By.TAG_NAME, value='strong')
+titles: list = []
+for title in strong:
+    titles.append(title.text)
+# print(titles)
+
+# set up message text:
+mess_text = f'The following jobs are available on easy apply today:\n'
+for title in titles:
+    mess_text += f'{title}\n'
+mess_text += 'Check them out!'
+
+# Send titles to self:
+OUTMAIL = os.getenv('FROM_EMAIL')
+PASSWORD = os.getenv('FROM_PASSWORD')
+TO_ADDY = os.getenv('TO_EMAIL')
+
+# set up email:
+proton = ProtonMail()
+proton.login(username=OUTMAIL, password=PASSWORD)
+
+new_message = proton.create_message(
+    recipients=[TO_ADDY],
+    subject='Price dropped',
+    body=mess_text
+)
+proton.send_message(new_message)
+proton.save_session('session.pickle')
