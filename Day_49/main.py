@@ -83,7 +83,7 @@ proton.login(username=OUTMAIL, password=PASSWORD)
 
 new_message = proton.create_message(
     recipients=[TO_ADDY],
-    subject='Price dropped',
+    subject='New Jobs on Easy Apply Today!',
     body=mess_text
 )
 proton.send_message(new_message)
