@@ -10,9 +10,7 @@ from time import sleep
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 import selenium.webdriver as webdriver
-from selenium.webdriver import ActionChains
 from selenium.webdriver.remote.webelement import WebElement
-from selenium.webdriver.support.ui import WebDriverWait as wait
 from selenium.webdriver.support import expected_conditions as ec
 from dotenv import load_dotenv
 
@@ -69,10 +67,23 @@ class InstaFollower():
         follow_buts: ec.List[WebElement] = self.driver.find_elements(
             By.TAG_NAME, 'button')
         sleep(5)
-        # NEED TO CHECK BELOW, IF WAS CASE OF NOT WAITING LONG ENOUGH FOR THE BUTTON TO BE CLICKABLE.
         # for but in follow_buts:
-        #     but.click()
-        #     sleep(5)
-
-    def follow(self) -> None:
-        pass
+        #     print(but.text)
+        count = 1
+        for but in follow_buts:
+            if but.text == 'Requested':
+                count += 1
+            elif but.text == 'Follow':
+                but.click()
+                sleep(5)
+                rqst_but: WebElement = self.driver.find_element(
+                    By.XPATH, '//button[text()="OK"]')
+                if rqst_but.is_displayed:
+                    rqst_but.click()
+                    sleep(5)
+                else:
+                    continue
+                count += 1
+            if count == 5:
+                self.driver.execute_script(
+                    "window.scrollTo(0, document.body.scrollHeight)")
