@@ -12,6 +12,7 @@ from selenium.webdriver.common.by import By
 import selenium.webdriver as webdriver
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as ec
+from selenium.common.exceptions import ElementNotVisibleException, NoSuchElementException
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -76,13 +77,11 @@ class InstaFollower():
             elif but.text == 'Follow':
                 but.click()
                 sleep(5)
-                rqst_but: WebElement = self.driver.find_element(
-                    By.XPATH, '//button[text()="OK"]')
-                if rqst_but.is_displayed:
-                    rqst_but.click()
-                    sleep(5)
-                else:
-                    continue
+                try:
+                    self.driver.find_element(
+                        By.XPATH, '//button[text()="OK"]').click()
+                except (ElementNotVisibleException, NoSuchElementException):
+                    pass
                 count += 1
             if count == 5:
                 self.driver.execute_script(
