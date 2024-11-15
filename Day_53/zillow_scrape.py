@@ -39,6 +39,7 @@ class ScrapeSF():
         self.link = ''
         self.all_links = ''
         self.link_list = []
+        self.driver = ''
 
     def scrape_urls(self) -> None:
         """_summary_
@@ -79,4 +80,18 @@ class ScrapeSF():
                   self.price_list[iter]}\nURL {self.link_list[iter]}\n\n')
 
     def Write_to_form(self):
-        pass
+        sleep(5)
+        self.driver = webdriver.Firefox()
+        self.driver.get(FORM_URL)
+        self.driver.maximize_window()
+        sleep(10)
+        input = self.driver.find_elements(
+            by=By.XPATH, value='//input[contains(@class, "whsOnd zHQkBf")]')
+        for i in range(0, len(input)):
+            input[i].click()
+            input[i].send_keys('TEST')
+        self.driver.find_element(
+            By.XPATH, '//span[contains(@class, "NPEfkd RveJvd snByac")]').click()
+        sleep(10)
+        self.driver.find_element(
+            By.LINK_TEXT, 'Submit another response').click()
