@@ -80,18 +80,26 @@ class ScrapeSF():
                   self.price_list[iter]}\nURL {self.link_list[iter]}\n\n')
 
     def Write_to_form(self):
-        sleep(5)
+        """_summary_
+        Send the data to Google Forms
+        No arguments.  No return.
+        """
         self.driver = webdriver.Firefox()
         self.driver.get(FORM_URL)
         self.driver.maximize_window()
         sleep(10)
-        input = self.driver.find_elements(
-            by=By.XPATH, value='//input[contains(@class, "whsOnd zHQkBf")]')
-        for i in range(0, len(input)):
-            input[i].click()
-            input[i].send_keys('TEST')
-        self.driver.find_element(
-            By.XPATH, '//span[contains(@class, "NPEfkd RveJvd snByac")]').click()
-        sleep(10)
-        self.driver.find_element(
-            By.LINK_TEXT, 'Submit another response').click()
+        for i in range(len(self.address_list)):
+            input = self.driver.find_elements(
+                by=By.XPATH, value='//input[contains(@class, "whsOnd zHQkBf")]')
+            input[0].click()
+            input[0].send_keys(self.address_list[i])
+            input[1].click()
+            input[1].send_keys(self.price_list[i])
+            input[2].click()
+            input[2].send_keys(self.link_list[i])
+            self.driver.find_element(
+                By.XPATH, '//span[contains(@class, "NPEfkd RveJvd snByac")]').click()
+            sleep(10)
+            self.driver.find_element(
+                By.LINK_TEXT, 'Submit another response').click()
+        self.driver.close()
